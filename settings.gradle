@@ -1,7 +1,8 @@
 
 rootProject.name = "AudioAndVideoProject"
+include ':app'
+include ':baseRes'
 include ':AudioRecord'
 include ':MediaRecorder'
 include ':AudioTrack'
 include ':MediaPlayer'
-include ':baseRes'

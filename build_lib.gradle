@@ -1,0 +1,9 @@
+apply from: "$rootDir/build_base_lib.gradle"
+android {
+    defaultConfig {
+    }
+}
+
+dependencies {
+    api project(path: ':baseRes')
+}

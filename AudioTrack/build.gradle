@@ -1,10 +1,7 @@
-apply plugin: 'com.android.application'
-
-apply from: "$rootDir/app_build.gradle"
+apply from: "$rootDir/build_lib.gradle"
 
 android {
     defaultConfig {
-        applicationId "cn.mtjsoft.www.audiotrack"
     }
 }
 

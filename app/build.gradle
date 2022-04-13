@@ -1,0 +1,15 @@
+apply from: "$rootDir/build_app.gradle"
+
+android {
+    defaultConfig {
+        applicationId "cn.mtjsoft.www.app"
+    }
+}
+
+dependencies {
+
+    implementation project(path: ':MediaRecorder')
+    implementation project(path: ':AudioRecord')
+    implementation project(path: ':MediaPlayer')
+    implementation project(path: ':AudioTrack')
+}

@@ -1,0 +1,116 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-parcelize'
+android {
+
+    compileSdkVersion rootProject.ext.CompileSdkVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.MinSdkVersion
+        targetSdkVersion rootProject.ext.TargetSdkVersion
+        versionCode rootProject.ext.VersionCode
+        versionName rootProject.ext.VersionName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    signingConfigs {
+        release {
+            v1SigningEnabled true
+            v2SigningEnabled true
+            keyAlias 'android'
+            keyPassword 'android'
+            storeFile file("$rootDir/configfile/android.jks")
+            storePassword 'android'
+        }
+    }
+
+    buildTypes {
+        release {
+            // 开启混淆
+            minifyEnabled true
+            // zipAlign优化
+            zipAlignEnabled true
+            // 日志控制开关
+            buildConfigField "boolean", "LOG_DEBUG", "false"
+            // 服务器地址
+            buildConfigField "String", "BASE_SERVER", '"http://www.baidu.com/"'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), "$rootDir/configfile/proguard-rules.pro"
+            signingConfig signingConfigs.release
+        }
+
+        alpha {
+            // 开启混淆
+            minifyEnabled true
+            // zipAlign优化
+            zipAlignEnabled true
+            //日志控制开关
+            buildConfigField "boolean", "LOG_DEBUG", "true"
+            // 服务器地址
+            buildConfigField "String", "BASE_SERVER", '"http://www.baidu.com/"'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), "$rootDir/configfile/proguard-rules.pro"
+            signingConfig signingConfigs.release
+        }
+
+        debug {
+            minifyEnabled false
+            zipAlignEnabled false
+            debuggable true
+            jniDebuggable true
+            //日志控制开关
+            buildConfigField "boolean", "LOG_DEBUG", "true"
+            // 服务器地址
+            buildConfigField "String", "BASE_SERVER", '"http://www.baidu.com/"'
+            signingConfig signingConfigs.release
+        }
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    //com.android.tools.build:gradle:version < 4.1.2
+    //    viewBinding {
+    //        enabled = true
+    //    }
+    //com.android.tools.build:gradle:version >=4.1.2
+    buildFeatures {
+        viewBinding true
+    }
+    //生成libs目录
+    sourceSets {
+        main {
+            jniLibs.srcDir 'libs'
+        }
+    }
+}
+
+kotlin {
+    experimental {
+        coroutines 'enable'
+    }
+}
+
+dependencies {
+    api fileTree(include: ['*.jar'], dir: 'libs')
+    api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    api "androidx.core:core-ktx:${rootProject.ext.androidxCoreKtxVersion}"
+    api "androidx.appcompat:appcompat:${rootProject.ext.androidxAppCompat}"
+    api "com.google.android.material:material:${rootProject.ext.materialVersion}"
+    api "androidx.constraintlayout:constraintlayout:${rootProject.ext.androidxConstraintlayoutVersion}"
+
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+}
