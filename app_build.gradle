@@ -1,0 +1,139 @@
+apply plugin: 'kotlin-android'
+
+android {
+
+    compileSdkVersion rootProject.ext.CompileSdkVersion
+    buildToolsVersion rootProject.ext.BuildToolsVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.MinSdkVersion
+        targetSdkVersion rootProject.ext.TargetSdkVersion
+        versionCode rootProject.ext.VersionCode
+        versionName rootProject.ext.VersionName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        multiDexEnabled true
+        ndk { //设置支持的SO库架构（开发者可以根据需要，选择一个或多个平台的so）
+            // "armeabi", "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+            abiFilters "armeabi-v7a", "arm64-v8a"
+        }
+    }
+
+    signingConfigs {
+        release {
+            v1SigningEnabled true
+            v2SigningEnabled true
+            keyAlias 'android'
+            keyPassword 'android'
+            storeFile file("$rootDir/configfile/android.jks")
+            storePassword 'android'
+        }
+    }
+
+    buildTypes {
+        release {
+            // 移除无用文件
+            shrinkResources true
+            // 开启混淆
+            minifyEnabled true
+            // zipAlign优化
+            zipAlignEnabled true
+            // 日志控制开关
+            buildConfigField "boolean", "LOG_DEBUG", "false"
+            // 服务器地址
+            buildConfigField "String", "BASE_SERVER", '"http://www.baidu.com/"'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), "$rootDir/configfile/proguard-rules.pro"
+            signingConfig signingConfigs.release
+        }
+
+        alpha {
+            // 移除无用文件
+            shrinkResources true
+            // 开启混淆
+            minifyEnabled true
+            // zipAlign优化
+            zipAlignEnabled true
+            //日志控制开关
+            buildConfigField "boolean", "LOG_DEBUG", "true"
+            // 服务器地址
+            buildConfigField "String", "BASE_SERVER", '"http://www.baidu.com/"'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), "$rootDir/configfile/proguard-rules.pro"
+            signingConfig signingConfigs.release
+        }
+
+        debug {
+            shrinkResources false
+            minifyEnabled false
+            zipAlignEnabled false
+            debuggable true
+            jniDebuggable true
+            //日志控制开关
+            buildConfigField "boolean", "LOG_DEBUG", "true"
+            // 服务器地址
+            buildConfigField "String", "BASE_SERVER", '"http://www.baidu.com/"'
+            signingConfig signingConfigs.release
+        }
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    //com.android.tools.build:gradle:version < 4.1.2
+    //    viewBinding {
+    //        enabled = true
+    //    }
+    //com.android.tools.build:gradle:version >=4.1.2
+    buildFeatures {
+        viewBinding true
+    }
+    //生成libs目录
+    sourceSets {
+        main {
+            jniLibs.srcDir 'libs'
+        }
+    }
+
+    android.applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            //T代表Test R代表Release
+            def drName = variant.buildType.isDebuggable() ? "T" : "R"
+            // 更换渠道，渠道简称 需要改变，具体值根据 软件产品版本命名规范 改变
+            def fileName = "V${defaultConfig.versionName}_${drName}_${dateTime()}.apk"
+            outputFileName = fileName
+        }
+    }
+}
+
+kotlin {
+    experimental {
+        coroutines 'enable'
+    }
+}
+
+static def dateTime() {
+    return new Date().format("yyyyMMdd", TimeZone.getTimeZone("GMT+8"))
+}
+
+dependencies {
+    api fileTree(include: ['*.jar'], dir: 'libs')
+    api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    api "androidx.core:core-ktx:${rootProject.ext.androidxCoreKtxVersion}"
+    api "androidx.appcompat:appcompat:${rootProject.ext.androidxAppCompat}"
+    api "com.google.android.material:material:${rootProject.ext.materialVersion}"
+    api "androidx.constraintlayout:constraintlayout:${rootProject.ext.androidxConstraintlayoutVersion}"
+
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+}

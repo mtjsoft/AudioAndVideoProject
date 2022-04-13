@@ -1,0 +1,4 @@
+
+rootProject.name = "AudioAndVideoProject"
+include ':app'
+include ':AudioRecord'
