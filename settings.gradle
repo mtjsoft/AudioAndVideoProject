@@ -2,3 +2,6 @@
 rootProject.name = "AudioAndVideoProject"
 include ':app'
 include ':AudioRecord'
+include ':MediaRecorder'
+include ':AudioTrack'
+include ':MediaPlayer'

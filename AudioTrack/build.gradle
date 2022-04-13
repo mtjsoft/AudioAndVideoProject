@@ -1,0 +1,13 @@
+apply plugin: 'com.android.application'
+
+apply from: "$rootDir/app_build.gradle"
+
+android {
+    defaultConfig {
+        applicationId "cn.mtjsoft.www.audiotrack"
+    }
+}
+
+dependencies {
+
+}
